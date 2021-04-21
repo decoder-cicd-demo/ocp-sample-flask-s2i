@@ -26,27 +26,76 @@ To obtain the default CRC to get the ``kubeadmin`` password, run ``crc console -
 
 ```bash
 $ oc login -u kubeadmin -p <password> https://api.crc.testing:6443
-$ oc whoami  # kubeadmin
-$ oc new-project sample-flask-s2i
+$ oc whoami                                                    # kubeadmin
+$ oc new-project sample-flask-s2i                              # create OCP project
+$ oc new-app https://github.com/sjfke/ocp-sample-flask-s2i.git # s2i deploy direct from git repo
+$ oc expose service/ocp-sample-flask-s2i                       # make accessible outside OCP.
+```
+
+Once the application deployment is finished then it will be accessible as [ocp-sample-flask-s2i](http://ocp-sample-flask-s2i-sample-flask-s2i.apps-crc.testing).
+
+### Output of ``oc new-app``
+
+```
+--> Found image 8ec6f0d (6 weeks old) in image stream "openshift/python" under tag "3.8-ubi8" for "python"
+
+    Python 3.8 
+    ---------- 
+    Python 3.8 available as container is a base platform for building and running various Python 3.8 applications and frameworks. Python is an easy to learn, powerful programming language. It has efficient high-level data structures and a simple but effective approach to object-oriented programming. Python's elegant syntax and dynamic typing, together with its interpreted nature, make it an ideal language for scripting and rapid application development in many areas on most platforms.
+
+    Tags: builder, python, python38, python-38, rh-python38
+
+    * The source repository appears to match: python
+    * A source build using source code from https://github.com/sjfke/ocp-sample-flask-s2i.git will be created
+      * The resulting image will be pushed to image stream tag "ocp-sample-flask-s2i:latest"
+      * Use 'oc start-build' to trigger a new build
+
+--> Creating resources ...
+    imagestream.image.openshift.io "ocp-sample-flask-s2i" created
+    buildconfig.build.openshift.io "ocp-sample-flask-s2i" created
+    deployment.apps "ocp-sample-flask-s2i" created
+    service "ocp-sample-flask-s2i" created
+--> Success
+    Build scheduled, use 'oc logs -f buildconfig/ocp-sample-flask-s2i' to track its progress.
+    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
+     'oc expose service/ocp-sample-flask-s2i' 
+    Run 'oc status' to view your app.
 
 ```
 
-To deploy this sample Python web application from the OpenShift web console, you should select ``python:2.7``, ``python:3.3``, ``python:3.4`` or ``python:latest``, when using _Add to project_. Use of ``python:latest`` is the same as having selected the most up to date Python version available, which at this time is ``python:3.4``.
+### Output of ``oc status`` while deploying
 
-The HTTPS URL of this code repository which should be supplied to the _Git Repository URL_ field when using _Add to project_ is:
+```bash
+$ oc status
+In project sample-flask-s2i on server https://api.crc.testing:6443
 
-* https://github.com/OpenShiftDemos/os-sample-python.git
+svc/ocp-sample-flask-s2i - 10.217.5.126:8080
+  deployment/ocp-sample-flask-s2i deploys istag/ocp-sample-flask-s2i:latest <-
+    bc/ocp-sample-flask-s2i source builds https://github.com/sjfke/ocp-sample-flask-s2i.git on openshift/python:3.8-ubi8 
+      build #1 pending for 20 seconds
+    deployment #1 running for 20 seconds - 0/1 pods growing to 1
 
-If using the ``oc`` command line tool instead of the OpenShift web console, to deploy this sample Python web application, you can run:
+
+1 info identified, use 'oc status --suggest' to see details.
 
 ```
-oc new-app https://github.com/OpenShiftDemos/os-sample-python.git
-```
 
-In this case, because no language type was specified, OpenShift will determine the language by inspecting the code repository. Because the code repository contains a ``requirements.txt``, it will subsequently be interpreted as including a Python application. When such automatic detection is used, ``python:latest`` will be used.
+### Output of ``oc status`` after application is deployed.
 
-If needing to select a specific Python version when using ``oc new-app``, you should instead use the form:
+```bash
+$ oc status
+In project sample-flask-s2i on server https://api.crc.testing:6443
 
-```
-oc new-app python:2.7~https://github.com/OpenShiftDemos/os-sample-python.git
+http://ocp-sample-flask-s2i-sample-flask-s2i.apps-crc.testing to pod port 8080-tcp (svc/ocp-sample-flask-s2i)
+  deployment/ocp-sample-flask-s2i deploys istag/ocp-sample-flask-s2i:latest <-
+    bc/ocp-sample-flask-s2i source builds https://github.com/sjfke/ocp-sample-flask-s2i.git on openshift/python:3.8-ubi8 
+    deployment #2 running for 10 minutes - 1 pod
+    deployment #1 deployed 14 minutes ago
+
+
+1 info identified, use 'oc status --suggest' to see details.
+
+$ oc get routes
+NAME                   HOST/PORT                                                PATH   SERVICES               PORT       TERMINATION   WILDCARD
+ocp-sample-flask-s2i   ocp-sample-flask-s2i-sample-flask-s2i.apps-crc.testing          ocp-sample-flask-s2i   8080-tcp                 None
 ```
