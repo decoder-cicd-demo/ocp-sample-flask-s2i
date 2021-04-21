@@ -14,6 +14,9 @@ In addition, the ``.s2i/environment`` file has been created to allow environment
 
 * The environment variable ``APP_CONFIG`` has been set to declare the name of the config file for ``gunicorn``.
 
+The example is based on [Getting Started with Flask](https://scotch.io/tutorials/getting-started-with-flask-a-python-microframework) but has been modified to work [Green Unicorn - WSGI sever](https://docs.gunicorn.org/en/stable/)
+
+
 ## Deployment Steps
 
 The deployment was test using *Red Hat CodeReady Containers*:
@@ -33,6 +36,21 @@ $ oc expose service/ocp-sample-flask-s2i                       # make accessible
 ```
 
 Once the application deployment is finished then it will be accessible as [ocp-sample-flask-s2i](http://ocp-sample-flask-s2i-sample-flask-s2i.apps-crc.testing).
+
+From the OpenShift Console WebUI:
+
+* From *Builds* check the build log file, to see what is happening
+* From *Services* link, you can access the Pod, and even open a terminal on the Pod.
+
+
+## Undeployment Steps
+
+```bash
+$ oc get all --selector app=ocp-sample-flask-s2i     # list everything associated with the app
+$ oc delete all --selector app=ocp-sample-flask-s2i  # delete everything associated with the app
+```
+
+## Example output from various commands
 
 ### Output of ``oc new-app``
 
@@ -98,4 +116,27 @@ http://ocp-sample-flask-s2i-sample-flask-s2i.apps-crc.testing to pod port 8080-t
 $ oc get routes
 NAME                   HOST/PORT                                                PATH   SERVICES               PORT       TERMINATION   WILDCARD
 ocp-sample-flask-s2i   ocp-sample-flask-s2i-sample-flask-s2i.apps-crc.testing          ocp-sample-flask-s2i   8080-tcp                 None
+```
+
+### Output of ``oc get all --selector``
+
+``` bash
+gcollis@morpheus ocp-sample-flask-s2i]$ oc get all --selector app=ocp-sample-flask-s2i
+NAME                           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+service/ocp-sample-flask-s2i   ClusterIP   10.217.5.126   <none>        8080/TCP   52m
+
+NAME                                   READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/ocp-sample-flask-s2i   1/1     1            1           52m
+
+NAME                                                  TYPE     FROM   LATEST
+buildconfig.build.openshift.io/ocp-sample-flask-s2i   Source   Git    1
+
+NAME                                              TYPE     FROM          STATUS     STARTED          DURATION
+build.build.openshift.io/ocp-sample-flask-s2i-1   Source   Git@868e0e2   Complete   52 minutes ago   4m1s
+
+NAME                                                  IMAGE REPOSITORY                                                                                TAGS     UPDATED
+imagestream.image.openshift.io/ocp-sample-flask-s2i   default-route-openshift-image-registry.apps-crc.testing/sample-flask-s2i/ocp-sample-flask-s2i   latest   48 minutes ago
+
+NAME                                            HOST/PORT                                                PATH   SERVICES               PORT       TERMINATION   WILDCARD
+route.route.openshift.io/ocp-sample-flask-s2i   ocp-sample-flask-s2i-sample-flask-s2i.apps-crc.testing          ocp-sample-flask-s2i   8080-tcp                 None
 ```
