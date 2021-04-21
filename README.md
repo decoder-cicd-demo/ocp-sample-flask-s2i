@@ -19,13 +19,13 @@ The example is based on [Getting Started with Flask](https://scotch.io/tutorials
 
 ## Deployment Steps
 
-The deployment was test using *Red Hat CodeReady Containers*:
+The deployment was tested using *Red Hat CodeReady Containers* (CRC) details of which can be found here:
 
 * [Introducing Red Hat CodeReady Containers](https://code-ready.github.io/crc/);
 * [Red Hat OpenShift 4 on your laptop: Introducing Red Hat CodeReady Containers](https://developers.redhat.com/blog/2019/09/05/red-hat-openshift-4-on-your-laptop-introducing-red-hat-codeready-containers/);
 * [Red Hat CodeReady Containers / Install OpenShift on your laptop](https://developers.redhat.com/products/codeready-containers/overview);
 
-To obtain the default CRC to get the ``kubeadmin`` password, run ``crc console --credentials``.
+To obtain the default CRC ``kubeadmin`` password, run ``crc console --credentials``.
 
 ```bash
 $ oc login -u kubeadmin -p <password> https://api.crc.testing:6443
