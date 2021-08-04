@@ -1,4 +1,4 @@
-# Flask Sample Application
+# Flask Application deployed with S2I 
 
 This repository provides a sample Python web application implemented using the Flask web framework and hosted using ``gunicorn``. It is intended to be used to demonstrate deployment of Python web applications to OpenShift 4 using [source-to-image](https://docs.openshift.com/enterprise/3.0/creating_images/s2i.html#creating-images-s2i).
 
@@ -142,34 +142,33 @@ $ oc new-app https://github.com/sjfke/ocp-sample-flask-s2i.git
 $ oc status
 In project work00 on server https://api.crc.testing:6443
 
-http://ocp-sample-flask-s2i-work00.apps-crc.testing to pod port 8080-tcp (svc/ocp-sample-flask-s2i)
+svc/ocp-sample-flask-s2i - 10.217.5.6:8080
   deployment/ocp-sample-flask-s2i deploys istag/ocp-sample-flask-s2i:latest <-
     bc/ocp-sample-flask-s2i source builds https://github.com/sjfke/ocp-sample-flask-s2i.git on openshift/python:3.8-ubi8 
-      build #1 running for about a minute - 52691de: Update README.md (Geoff Collis <34105187+sjfke@users.noreply.github.com>)
-    deployment #1 running for about a minute - 0/1 pods growing to 1
+      build #1 running for 7 seconds - 406fa64: Merge pull request #2 from sjfke/dev (Geoff Collis <34105187+sjfke@users.noreply.github.com>)
+    deployment #1 running for 7 seconds - 0/1 pods growing to 1
 
 
 1 info identified, use 'oc status --suggest' to see details.
-
 ```
 
 ### Output of ``oc status`` after application is deployed.
 
 ```bash
-[gcollis@morpheus ocp-sample-flask-s2i]$ oc status
+$ oc status
 In project work00 on server https://api.crc.testing:6443
 
 http://ocp-sample-flask-s2i-work00.apps-crc.testing to pod port 8080-tcp (svc/ocp-sample-flask-s2i)
   deployment/ocp-sample-flask-s2i deploys istag/ocp-sample-flask-s2i:latest <-
     bc/ocp-sample-flask-s2i source builds https://github.com/sjfke/ocp-sample-flask-s2i.git on openshift/python:3.8-ubi8 
-    deployment #2 running for 34 minutes - 1 pod
-    deployment #1 deployed 40 minutes ago
+    deployment #2 running for 3 minutes - 1 pod
+    deployment #1 deployed 4 minutes ago
 
 
 1 info identified, use 'oc status --suggest' to see details.
 ```
 
-### Output of ``oc status`` after ``oc expose service/ocp-sample-flask-s2i``
+### Output of ``oc get routes`` after ``oc expose service/ocp-sample-flask-s2i``
 
 ```bash
 $ oc get routes
@@ -180,21 +179,24 @@ ocp-sample-flask-s2i   ocp-sample-flask-s2i-work00.apps-crc.testing          ocp
 ### Output of ``oc get all --selector app=ocp-sample-flask-s2i``
 
 ``` bash
-$ oc get all --selector app=ocp-sample-flask-s2i
-NAME                           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
-service/ocp-sample-flask-s2i   ClusterIP   10.217.4.118   <none>        8080/TCP   44m
+$ oc get routes
+NAME                   HOST/PORT                                      PATH   SERVICES               PORT       TERMINATION   WILDCARD
+ocp-sample-flask-s2i   ocp-sample-flask-s2i-work00.apps-crc.testing          ocp-sample-flask-s2i   8080-tcp                 None
+[gcollis@morpheus ocp-sample-flask-s2i]$ oc get all --selector app=ocp-sample-flask-s2i
+NAME                           TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+service/ocp-sample-flask-s2i   ClusterIP   10.217.5.6   <none>        8080/TCP   6m45s
 
 NAME                                   READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/ocp-sample-flask-s2i   1/1     1            1           44m
+deployment.apps/ocp-sample-flask-s2i   1/1     1            1           6m45s
 
 NAME                                                  TYPE     FROM   LATEST
 buildconfig.build.openshift.io/ocp-sample-flask-s2i   Source   Git    1
 
-NAME                                              TYPE     FROM          STATUS     STARTED          DURATION
-build.build.openshift.io/ocp-sample-flask-s2i-1   Source   Git@52691de   Complete   44 minutes ago   5m58s
+NAME                                              TYPE     FROM          STATUS     STARTED         DURATION
+build.build.openshift.io/ocp-sample-flask-s2i-1   Source   Git@406fa64   Complete   6 minutes ago   58s
 
 NAME                                                  IMAGE REPOSITORY                                                                      TAGS     UPDATED
-imagestream.image.openshift.io/ocp-sample-flask-s2i   default-route-openshift-image-registry.apps-crc.testing/work00/ocp-sample-flask-s2i   latest   38 minutes ago
+imagestream.image.openshift.io/ocp-sample-flask-s2i   default-route-openshift-image-registry.apps-crc.testing/work00/ocp-sample-flask-s2i   latest   5 minutes ago
 
 NAME                                            HOST/PORT                                      PATH   SERVICES               PORT       TERMINATION   WILDCARD
 route.route.openshift.io/ocp-sample-flask-s2i   ocp-sample-flask-s2i-work00.apps-crc.testing          ocp-sample-flask-s2i   8080-tcp                 None
