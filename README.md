@@ -1,4 +1,4 @@
-# Flask Application deployed with S2I 
+# Flask Application deployed to OpenShift using S2I 
 
 This repository provides a sample Python web application implemented using the Flask web framework and hosted using ``gunicorn``. It is intended to be used to demonstrate deployment of Python web applications to OpenShift 4 using [source-to-image](https://docs.openshift.com/enterprise/3.0/creating_images/s2i.html#creating-images-s2i).
 
