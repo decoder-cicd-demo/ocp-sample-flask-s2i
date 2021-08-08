@@ -12,15 +12,24 @@ This sample Python application relies on the support provided by the default S2I
 * The WSGI application entry point within the code file needs to be named ``application``.
 * The ``gunicorn`` package must be listed in the ``requirements.txt`` file for ``pip``.
 
-In addition, the ``.s2i/environment`` file has been created to allow environment variables to be set to override the behaviour of the default S2I builder for Python.
+The ``.s2i/environment`` file was created to allow environment variables to override the behaviour of the default S2I builder for Python.
 
-* The environment variable ``APP_CONFIG`` has been set to declare the name of the config file for ``gunicorn``.
+* The environment variable ``APP_CONFIG=config.py``  declares the name of the ``gunicorn`` config file;
 
 The example is based on [Getting Started with Flask](https://scotch.io/tutorials/getting-started-with-flask-a-python-microframework) but has 
 been modified to work [Green Unicorn - WSGI sever](https://docs.gunicorn.org/en/stable/) and the content of the web-site 
 changed to provide some [Lorem Ipsum](https://en.wikipedia.org/wiki/Lorem_ipsum) pages from [Lorem IPsum Generators - The 14 Best](https://digital.com/lorem-ipsum-generators/), 
 and `isalive` and `isready` probe pages have been added for Kubernetes.
 
+Key files:
+
+* config.py: GUNICORN settings;
+* wsgi.py: define the pages (routes) that are visible;
+* templates/base.html: boiler-plate for html pages;
+* templates/index.html: Standard Lorem Ipsum;
+* templates/legal.html: Legal-style Lorem Ipsum;
+* templates/pirate.html: Pirate-style Lorem Ipsum;
+* templates/zombie.html: Zombie-style Lorem Ipsum
 
 ## Deployment Steps
 
